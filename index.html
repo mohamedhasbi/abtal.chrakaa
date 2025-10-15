@@ -205,6 +205,33 @@
                 page-break-inside: avoid;
             }
         }
+        
+        /* Fixed modal overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        /* Uncompleted month section */
+        .uncompleted-section {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+        }
+        .dark-mode .uncompleted-section {
+            background-color: #451a03;
+            border-left-color: #f59e0b;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -212,7 +239,7 @@
     <div id="login-page" class="login-container">
         <div class="login-form">
             <div class="text-center mb-6">
-                <img src="https://imgur.com/a/gLiLcpa" alt="شعار الجمعية" class="w-16 h-16 rounded-full object-cover mx-auto mb-4">
+                <img src="https://i.imgur.com/5GQqJZK.png" alt="شعار الجمعية" class="w-16 h-16 rounded-full object-cover mx-auto mb-4">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">تسجيل الدخول</h2>
                 <p class="text-gray-600 dark:text-gray-300 mt-2">ادخل بياناتك للوصول إلى النظام</p>
             </div>
@@ -242,7 +269,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <img src="https://imgur.com/a/gLiLcpa" alt="شعار الجمعية" class="w-12 h-12 rounded-full object-cover sm:w-16 sm:h-16">
+                        <img src="https://i.imgur.com/5GQqJZK.png" alt="شعار الجمعية" class="w-12 h-12 rounded-full object-cover sm:w-16 sm:h-16">
                         <div>
                             <h1 class="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl" id="main-title">نظام إدارة صالة التايكوندو</h1>
                             <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 sm:text-base" id="subtitle">جمعية أبطال شراقة للتايكوندو</p>
@@ -280,6 +307,19 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="grid grid-cols-2 stats-grid sm:grid-cols-4 gap-4 mb-4 stats-grid-mobile" id="stats-container">
                 <!-- Stats will be populated by JavaScript -->
+            </div>
+
+            <!-- Uncompleted Month Players Section -->
+            <div id="uncompleted-month-section" class="uncompleted-section hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white" id="uncompleted-title">اللاعبين غير المكتملين للشهر الحالي</h3>
+                    <button id="print-uncompleted" class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-lg text-sm no-print">
+                        <i class="fas fa-print"></i> طباعة
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3" id="uncompleted-players-container">
+                    <!-- Uncompleted players will be populated by JavaScript -->
+                </div>
             </div>
 
             <!-- Filters -->
@@ -344,8 +384,8 @@
     </div>
 
     <!-- Add/Edit Player Modal -->
-    <div id="player-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 z-50 hidden">
-        <div class="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto dark:bg-gray-800 modal-content slide-in">
+    <div id="player-modal" class="modal-overlay hidden">
+        <div class="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto dark:bg-gray-800 modal-content">
             <div class="p-4 sm:p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl" id="modal-title">إضافة لاعب جديد</h2>
@@ -500,7 +540,7 @@
         const translations = {
             ar: {
                 mainTitle: "نظام إدارة صالة التايكوندو",
-                subtitle: "جمعية أبطال شراكا للتايكوندو",
+                subtitle: "جمعية أبطال شراقة للتايكوندو",
                 addPlayer: "إضافة لاعب جديد",
                 noPlayers: "لا يوجد لاعبين",
                 noPlayersDesc: "لم يتم العثور على لاعبين يطابقون معايير البحث الخاصة بك.",
@@ -565,7 +605,8 @@
                 insuranceAlert: "اللاعبين غير المضمونين",
                 monthAlert: "اللاعبين غير المكتملين للشهر الحالي",
                 currentMonthPlayers: "اللاعبين المكتملين للشهر الحالي",
-                uninsuredPlayers: "اللاعبين غير المضمونين"
+                uninsuredPlayers: "اللاعبين غير المضمونين",
+                uncompletedPlayers: "اللاعبين غير المكتملين للشهر الحالي"
             },
             fr: {
                 mainTitle: "Système de gestion du club de Taekwondo",
@@ -634,7 +675,8 @@
                 insuranceAlert: "Joueurs non assurés",
                 monthAlert: "Joueurs n'ayant pas complété le mois actuel",
                 currentMonthPlayers: "Joueurs ayant complété le mois actuel",
-                uninsuredPlayers: "Joueurs non assurés"
+                uninsuredPlayers: "Joueurs non assurés",
+                uncompletedPlayers: "Joueurs n'ayant pas complété le mois actuel"
             }
         };
 
@@ -782,6 +824,7 @@
             // Event listeners for print buttons
             document.getElementById('print-current-month').addEventListener('click', printCurrentMonthPlayers);
             document.getElementById('print-uninsured').addEventListener('click', printUninsuredPlayers);
+            document.getElementById('print-uncompleted').addEventListener('click', printUncompletedPlayers);
             
             // Initialize main dashboard
             initializeMainDashboard();
@@ -816,6 +859,7 @@
             
             renderPlayers();
             renderStats();
+            renderUncompletedPlayers();
         }
 
         function initializeMainDashboard() {
@@ -991,19 +1035,10 @@
             previewImage.style.display = 'none';
             
             document.getElementById('player-modal').classList.remove('hidden');
-            document.getElementById('player-modal').querySelector('.modal-content').classList.add('slide-in');
         }
 
         function hideModal() {
-            const modal = document.getElementById('player-modal');
-            const modalContent = modal.querySelector('.modal-content');
-            modalContent.classList.remove('slide-in');
-            modalContent.classList.add('slide-out');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modalContent.classList.remove('slide-out');
-            }, 400);
+            document.getElementById('player-modal').classList.add('hidden');
         }
 
         function showEditModal(player) {
@@ -1049,7 +1084,6 @@
             previewImage.style.display = 'block';
             
             document.getElementById('player-modal').classList.remove('hidden');
-            document.getElementById('player-modal').querySelector('.modal-content').classList.add('slide-in');
         }
 
         function handleFormSubmit(e) {
@@ -1091,6 +1125,7 @@
             
             renderPlayers();
             renderStats();
+            renderUncompletedPlayers();
             hideModal();
         }
 
@@ -1100,6 +1135,7 @@
                 players = players.filter(player => player.id !== id);
                 renderPlayers();
                 renderStats();
+                renderUncompletedPlayers();
             }
         }
 
@@ -1126,6 +1162,8 @@
             const femalePlayers = players.filter(p => p.gender === 'أنثى').length;
             const insuredPlayers = players.filter(p => p.insurance === 'نعم').length;
             const uninsuredPlayers = players.filter(p => p.insurance === 'لا').length;
+            const currentMonth = months.ar[new Date().getMonth()];
+            const uncompletedPlayers = players.filter(p => !p.completedMonths.includes(currentMonth)).length;
             
             container.innerHTML = `
                 <div class="bg-white rounded-xl shadow-sm p-3 dark:bg-gray-800">
@@ -1158,10 +1196,10 @@
                 <div class="bg-white rounded-xl shadow-sm p-3 dark:bg-gray-800">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs font-medium text-gray-600 dark:text-gray-300 sm:text-sm">${t.insuredPlayers}</p>
-                            <p class="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">${insuredPlayers}</p>
+                            <p class="text-xs font-medium text-gray-600 dark:text-gray-300 sm:text-sm">${t.uncompletedPlayers}</p>
+                            <p class="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">${uncompletedPlayers}</p>
                         </div>
-                        <i class="fas fa-shield-alt fa-lg text-purple-500 sm:fa-2x"></i>
+                        <i class="fas fa-calendar-times fa-lg text-yellow-500 sm:fa-2x"></i>
                     </div>
                 </div>
             `;
@@ -1289,6 +1327,35 @@
             `).join('');
         }
 
+        function renderUncompletedPlayers() {
+            const currentMonth = months.ar[new Date().getMonth()];
+            const uncompletedPlayers = players.filter(player => !player.completedMonths.includes(currentMonth));
+            const container = document.getElementById('uncompleted-players-container');
+            const section = document.getElementById('uncompleted-month-section');
+            const title = document.getElementById('uncompleted-title');
+            
+            if (uncompletedPlayers.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            
+            section.classList.remove('hidden');
+            title.textContent = `اللاعبين غير المكتملين للشهر الحالي (${currentMonth})`;
+            
+            container.innerHTML = uncompletedPlayers.map(player => `
+                <div class="bg-white rounded-lg p-3 shadow-sm dark:bg-gray-700 border-l-4 border-yellow-500">
+                    <div class="flex items-center gap-3">
+                        <img src="${player.photo}" alt="${player.name}" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-medium text-gray-900 dark:text-white">${player.name}</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">${player.phone}</p>
+                            <p class="text-xs text-yellow-600 dark:text-yellow-400">لم يكمل شهر ${currentMonth}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function getFrenchBeltName(arabicName) {
             const mapping = {
                 'أبيض': 'Blanc',
@@ -1361,7 +1428,7 @@
                 </head>
                 <body>
                     <div class="header">
-                        <img src="https://imgur.com/a/gLiLcpa" alt="شعار الجمعية">
+                        <img src="https://i.imgur.com/5GQqJZK.png" alt="شعار الجمعية">
                         <h1>جمعية أبطال شراقة للتايكوندو</h1>
                         <h2>اللاعبين المكتملين للشهر الحالي - ${currentMonth}</h2>
                         <p>تاريخ الطباعة: ${new Date().toLocaleDateString('ar-MA')}</p>
@@ -1414,7 +1481,7 @@
                 </head>
                 <body>
                     <div class="header">
-                        <img src="https://imgur.com/a/gLiLcpa" alt="شعار الجمعية">
+                        <img src="https://i.imgur.com/5GQqJZK.png" alt="شعار الجمعية">
                         <h1>جمعية أبطال شراقة للتايكوندو</h1>
                         <h2>اللاعبين غير المضمونين</h2>
                         <p>تاريخ الطباعة: ${new Date().toLocaleDateString('ar-MA')}</p>
@@ -1428,6 +1495,60 @@
                             ${player.cin ? `<div class="player-info">CIN: ${player.cin}</div>` : ''}
                             ${player.birthCertificate ? `<div class="player-info">عقد الازدياد: ${player.birthCertificate}</div>` : ''}
                             <div class="player-info" style="color: #856404; font-weight: bold;">بدون تأمين</div>
+                        </div>
+                    `).join('')}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function printUncompletedPlayers() {
+            const currentMonth = months.ar[new Date().getMonth()];
+            const uncompletedPlayers = players.filter(player => !player.completedMonths.includes(currentMonth));
+            
+            if (uncompletedPlayers.length === 0) {
+                alert('جميع اللاعبين أكملوا الشهر الحالي');
+                return;
+            }
+            
+            // Create print content
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html dir="rtl">
+                <head>
+                    <title>اللاعبين غير المكتملين للشهر الحالي - ${currentMonth}</title>
+                    <style>
+                        body { font-family: 'Tajawal', sans-serif; margin: 20px; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .header img { width: 100px; height: 100px; border-radius: 50%; }
+                        .header h1 { font-size: 24px; margin: 10px 0; }
+                        .player { border: 1px solid #ddd; margin: 10px 0; padding: 15px; border-radius: 8px; background-color: #fef3c7; }
+                        .player-name { font-size: 18px; font-weight: bold; margin-bottom: 5px; color: #92400e; }
+                        .player-info { margin: 5px 0; color: #666; }
+                        @media print {
+                            body { margin: 0; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <img src="https://i.imgur.com/5GQqJZK.png" alt="شعار الجمعية">
+                        <h1>جمعية أبطال شراقة للتايكوندو</h1>
+                        <h2>اللاعبين غير المكتملين للشهر الحالي - ${currentMonth}</h2>
+                        <p>تاريخ الطباعة: ${new Date().toLocaleDateString('ar-MA')}</p>
+                    </div>
+                    ${uncompletedPlayers.map(player => `
+                        <div class="player">
+                            <div class="player-name">${player.name}</div>
+                            <div class="player-info">العمر: ${player.age} سنة | الوزن: ${player.weight} كغ | الطول: ${player.height} سم</div>
+                            <div class="player-info">الرتبة: ${player.level} | الجنس: ${player.gender}</div>
+                            <div class="player-info">الهاتف: ${player.phone} | العنوان: ${player.address}</div>
+                            ${player.cin ? `<div class="player-info">CIN: ${player.cin}</div>` : ''}
+                            ${player.birthCertificate ? `<div class="player-info">عقد الازدياد: ${player.birthCertificate}</div>` : ''}
+                            <div class="player-info" style="color: #92400e; font-weight: bold;">لم يكمل شهر ${currentMonth}</div>
                         </div>
                     `).join('')}
                 </body>
@@ -1488,6 +1609,7 @@
             document.getElementById('insurance-number-label').textContent = t.insuranceNumberLabel;
             document.getElementById('submit-btn').textContent = t.submitBtn;
             document.getElementById('cancel-btn').textContent = t.cancelBtn;
+            document.getElementById('uncompleted-title').textContent = t.uncompletedPlayers;
             
             // Update placeholders and options
             document.getElementById('search-input').placeholder = t.searchPlaceholder;
@@ -1511,6 +1633,7 @@
             // Re-render everything
             renderPlayers();
             renderStats();
+            renderUncompletedPlayers();
         }
 
         function toggleDarkMode() {
